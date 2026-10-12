@@ -1,139 +1,168 @@
-::: {align="center"}
- ISO 20022 Payment Processing System ## A Java and Spring Boot
-backend for exploring modern financial payment workflows
-[Java(https://img.shields.io/badge/Java-21-orange?logo=openjdk)\](https://openjdk.org/)
-[Spring
-Boot(https://img.shields.io/badge/Spring%20Boot-3.2.3-6DB33F?logo=springboot)\](https://spring.io/projects/spring-boot)
-[Maven(https://img.shields.io/badge/Build-Maven-C71A36?logo=apachemaven)\](https://maven.apache.org/)
-[Docker(https://img.shields.io/badge/Container-Docker-2496ED?logo=docker)\](https://www.docker.com/)
-[License:
-MIT(https://img.shields.io/badge/License-MIT-yellow.svg)\](LICENSE)
-A backend project demonstrating payment APIs, transaction
-management, security configuration, and ISO 20022-style XML message
-generation.
-:::
+# ISO 20022 Payment Processing System
 
-- # Overview The ISO 20022 Payment Processing System is a
-Java 21 and Spring Boot application built to explore how a payment
-service can expose REST APIs, validate payment requests, track
-transactions, and generate structured financial messages. The codebase
-follows a layered structure with controllers, services, repositories,
-DTOs, domain entities, and centralized exception handling. It also
-includes OpenAPI/Swagger documentation, application health and metrics
-endpoints through Spring Boot Actuator, test classes, and Docker-related
-configuration.  Project status: This repository is a learning
-and portfolio project, not a production banking system. ISO 20022
-message generation is implemented for the message types listed below;
-full standards certification, real bank connectivity, and
-production-grade payment controls are not implied. # Features -
-Payment REST APIs for initiating transfers, checking transaction
-status, and viewing paginated transaction history. - ISO 20022
-message generation for pain.001, pacs.008, and
-camt.053. - Request validation using Jakarta Bean
-Validation. - Spring Security configuration and JWT-related
-dependencies. - Transaction persistence layer using Spring Data
-JPA and Hibernate. - Centralized error handling with custom
-exceptions and structured error responses. - API documentation
-using OpenAPI/Swagger UI. - Health and application metrics
-through Spring Boot Actuator. - Automated tests for payment
-service and controller behavior. - Docker configuration and a
-Docker Compose file for a local service environment. # Technology
-Stack  Area  Technologies  --  Language  Java 21
-  Backend framework  Spring Boot 3.2.3, Spring Web   API style
- REST, JSON   Persistence  Spring Data JPA, Hibernate  
-Databases configured  H2 for development; MySQL for the production
-profile / Compose configuration   Security  Spring Security, JWT
-libraries, BCrypt password encoder   Financial messaging  ISO
-20022-style XML generation: pain.001, pacs.008, camt.053 
- Validation  Jakarta Bean Validation   API documentation 
-Springdoc OpenAPI / Swagger UI   Monitoring  Spring Boot Actuator
-  Build  Maven   Container tooling  Docker, Docker Compose
-  Testing  Spring Boot Test, JUnit-based tests, Spring Security
-Test  Frontend: The repository currently presents a Spring
-Boot backend; a React frontend is not included in this repository
-structure. # Architecture text Client / API Consumer  v REST
-Controllers  v Service Layer   v v Payment ISO 20022 Processing
-Message Generation  v Repository Layer (Spring Data JPA)  v
-Configured Database (H2 development / MySQL production profile) 
-The main code is organized by responsibility rather than placing all
-logic in controllers. # ISO 20022 Message Types  Message  Purpose
- Current project role  ---  pain.001 
-Customer credit transfer initiation  Generated for payment initiation
-  pacs.008  Financial institution-to-financial institution
-customer credit transfer  Generated as part of the message bundle 
- camt.053  Bank-to-customer statement  Generated as part of
-the message bundle  The application exposes an endpoint to retrieve
-the generated message bundle for a transaction. Generated XML should be
-validated against the appropriate ISO 20022 schema before being treated
-as interoperable with a real financial institution. # API Endpoints
-The controller is rooted at /api/v1/payments.  Method  Endpoint
- Purpose  ---  POST 
-/api/v1/payments/transfer  Initiate a payment transfer  
-GET  /api/v1/payments/{transactionId}  Retrieve a payment by
-transaction ID   GET  /api/v1/payments  Retrieve
-paginated transaction history   GET 
-/api/v1/payments/{transactionId}/messages  Retrieve generated ISO
-20022 XML messages   GET  /api/v1/payments/health 
-Payment service health information   GET  /actuator/health
- Spring Boot health endpoint  Payment endpoints are subject to the
-applications Spring Security configuration. See the configuration and
-API documentation for the current authentication behavior. # Getting
-Started ## Prerequisites - JDK 21 - Maven 3.8+ (or use the Maven
-Wrapper if you add one) - Git - Docker Desktop only if you want to use
-the container configuration ## 1. Clone the repository bash git
-clone
-https://github.com/Sam-k-001/ISO20022-Payment-Processing-System.git cd
-ISO20022-Payment-Processing-System  If your local folder contains
-the Maven project in a subdirectory, change into the directory that
-contains pom.xml before running Maven commands. ## 2. Build and
-test bash mvn clean verify  ## 3. Run the application
-bash mvn spring-boot:run  The default application port is
-8080. The default configuration activates the dev profile
-and uses an in-memory H2 database. ## 4. Open API documentation Once
-the application starts, visit: - Swagger UI:
-http://localhost:8080/swagger-ui.html\` - OpenAPI JSON:
-http://localhost:8080/api-docs\` - Health:
-http://localhost:8080/actuator/health\` Some payment endpoints require
-authentication according to the configured security rules. # Database
-and Configuration The default application.properties uses an
-in-memory H2 database for development. The prod profile is
-configured for MySQL. Before running the production profile, configure
-database credentials through environment variables such as
-DB_USERNAME and DB_PASSWORD. Do not commit real credentials, JWT
-secrets, or other secrets to GitHub. Replace development secrets with
-environment-provided values before any public deployment. The Docker
-Compose file is located under docker/. Review its build context and
-environment settings before running it from that directory, and use
-non-default credentials for any environment beyond local testing. #
-Tests Run the test suite with: bash mvn test  Test sources
-are located under src/test/java. Test results depend on the current
-code and local environment; run the commands above to confirm the latest
-state. # Project Structure text iso20022-payment-system/ ├──
-docker/ │ ├── Dockerfile │ └── docker-compose.yml ├── src/ │ ├── main/ │
-│ ├── java/com/fintech/payment/ │ │ │ ├── config/ │ │ │ ├── controller/
-│ │ │ ├── domain/ │ │ │ │ ├── dto/ │ │ │ │ ├── entity/ │ │ │ │ └──
-enums/ │ │ │ ├── exception/ │ │ │ ├── iso20022/ │ │ │ │ ├── factory/ │ │
-│ │ ├── generator/ │ │ │ │ └── model/ │ │ │ ├── repository/ │ │ │ └──
-service/ │ │ └── resources/ │ └── test/ ├── pom.xml ├── README.md └──
-LICENSE  # Roadmap The following are planned
-improvements, not claims about features already implemented: -  
-PostgreSQL and Flyway migrations -   Reliable asynchronous Kafka
-payment workflow, including retries and dead-letter handling -  
-Idempotency and stronger payment lifecycle controls -   Double-entry
-ledger with balanced debit and credit entries -   Fraud rules and
-persisted risk decisions -   Settlement and reconciliation
-workflows -   Additional ISO 20022 messages: pacs.002,
-pain.002, camt.056, and pacs.004 -   Prometheus metrics
-and Grafana dashboards -   GitHub Actions CI pipeline -  
-Kubernetes deployment manifests -   AWS deployment documentation and
-infrastructure # Security and Scope This repository is intended for
-educational and portfolio use. Do not use it to process real money or
-sensitive customer data. A production payment platform would require,
-among other things, verified authentication and authorization, secret
-management, schema-validated ISO messages, idempotent processing, ledger
-integrity, audit trails, operational monitoring, threat modeling, and
-independent security testing. # Contributing Suggestions and
-improvements are welcome. For a change, create a branch, describe the
-problem being solved, add or update tests, and open a pull request. #
-License This project is licensed under the MIT License. See
-LICENSE(LICENSE) for details.
+<div align="center">
+
+**A Java-based payment processing backend built with Spring Boot, featuring secure REST APIs, transaction management, and ISO 20022 financial messaging.**
+
+![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?logo=springboot)
+![Maven](https://img.shields.io/badge/Maven-Build-C71A36?logo=apachemaven)
+![Docker](https://img.shields.io/badge/Docker-Supported-2496ED?logo=docker)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+</div>
+
+## Project Overview
+
+The ISO 20022 Payment Processing System is a backend application developed using Java 21 and Spring Boot 3 to demonstrate payment processing workflows and standardized financial messaging. It provides RESTful APIs for handling payment requests, validating transaction data, tracking payment records, and generating ISO 20022-style XML messages.
+
+The application follows a layered architecture that separates controllers, services, repositories, DTOs, and domain entities. It also incorporates Spring Security, JWT-related authentication components, centralized exception handling, API documentation, automated tests, and Docker configuration. This project serves as a practical exploration of backend engineering and financial technology concepts.
+
+## Key Features
+
+- Payment processing through RESTful APIs.
+- ISO 20022 message generation for `pain.001`, `pacs.008`, and `camt.053`.
+- Spring Security and JWT-related security components.
+- Payment request validation and transaction management.
+- Spring Data JPA and Hibernate for database access.
+- Centralized exception handling and structured error responses.
+- Swagger/OpenAPI API documentation.
+- Spring Boot Actuator health and monitoring endpoints.
+- Unit and controller testing.
+- Docker and Docker Compose configuration.
+
+## Technology Stack
+
+| Category | Technologies |
+|---|---|
+| Programming Language | Java 21 |
+| Backend Framework | Spring Boot 3 |
+| API Development | Spring Web, REST APIs |
+| Security | Spring Security, JWT |
+| Persistence | Spring Data JPA, Hibernate |
+| Database | H2 for development; MySQL configured for the production profile |
+| Financial Messaging | ISO 20022 |
+| API Documentation | Swagger/OpenAPI |
+| Monitoring | Spring Boot Actuator |
+| Build Tool | Maven |
+| Containerization | Docker, Docker Compose |
+| Testing | Spring Boot Test, JUnit |
+
+## System Architecture
+
+The application uses a layered backend architecture to separate responsibilities and make the code easier to maintain and extend.
+
+```text
+Client / API Consumer
+        |
+        v
+REST Controllers
+        |
+        v
+Service Layer
+        |
+        +----------------------+
+        |                      |
+        v                      v
+Payment Processing      ISO 20022 Message
+        |                 Generation
+        v
+Repository Layer
+        |
+        v
+Configured Database
+```
+
+## ISO 20022 Financial Messaging
+
+The project explores the following ISO 20022 message types:
+
+- **pain.001:** Customer credit transfer initiation.
+- **pacs.008:** Financial institution-to-financial institution customer credit transfer.
+- **camt.053:** Bank-to-customer statement.
+
+These message generators demonstrate the structure and purpose of standardized financial messages. Additional schema validation and integration testing would be needed before using generated messages with real financial institutions.
+
+## Getting Started
+
+### Prerequisites
+
+- Java Development Kit (JDK) 21
+- Maven
+- Git
+- Docker Desktop (optional)
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/Sam-k-001/ISO20022-Payment-Processing-System.git
+cd ISO20022-Payment-Processing-System
+```
+
+### Build the Project
+
+```bash
+mvn clean verify
+```
+
+### Run the Application
+
+```bash
+mvn spring-boot:run
+```
+
+The application is configured to run on port `8080` by default. Check the application configuration for the active profile and database settings.
+
+## API Documentation
+
+After starting the application, try these URLs if enabled by the current configuration:
+
+- **Swagger UI:** `http://localhost:8080/swagger-ui.html`
+- **OpenAPI JSON:** `http://localhost:8080/api-docs`
+- **Application Health:** `http://localhost:8080/actuator/health`
+
+Authentication requirements depend on the configured Spring Security rules.
+
+## Testing
+
+Run the automated test suite with:
+
+```bash
+mvn test
+```
+
+Run the complete Maven verification lifecycle with:
+
+```bash
+mvn clean verify
+```
+
+## Docker
+
+The repository contains Docker-related configuration under the `docker/` directory. Review the Dockerfile, Compose build context, database credentials, and environment variables before starting the containerized application.
+
+Never commit real passwords, JWT secrets, or production credentials to the repository.
+
+## Project Roadmap
+
+The following improvements are planned and should be marked complete only after implementation and testing:
+
+- [ ] PostgreSQL and Flyway database migrations.
+- [ ] Kafka-based asynchronous payment processing.
+- [ ] Idempotent payment processing and reliable event handling.
+- [ ] Double-entry ledger service.
+- [ ] Fraud detection service.
+- [ ] Settlement and reconciliation workflows.
+- [ ] Additional ISO 20022 messages: `pacs.002`, `pain.002`, `camt.056`, and `pacs.004`.
+- [ ] Prometheus and Grafana monitoring.
+- [ ] GitHub Actions CI/CD pipeline.
+- [ ] Kubernetes deployment.
+- [ ] AWS deployment.
+
+## Project Scope
+
+This is an educational and portfolio project intended to demonstrate backend development, payment workflow concepts, and financial messaging. It is not a production banking platform and should not be used to process real payments or sensitive customer data without substantial additional engineering, security review, compliance validation, and testing.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
